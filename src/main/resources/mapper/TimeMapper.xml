@@ -6,19 +6,83 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<insert id="save" parameterType="Time" keyProperty="id" useGeneratedKeys="true">
 		INSERT INTO
-			time(userId, title, imgUrl, content, longitude, latitude, createTime, updateTime, label, praiseNum, checkStatus)
+			time(userId, title, imgUrl, content, longitude, latitude, createTime, updateTime, label,
+				 praiseNum, checkStatus, visible)
 		VALUES
 			(#{userId}, #{title}, #{imgUrl}, #{content}, #{longitude}, #{latitude}, #{createTime}, #{updateTime}
-				, #{label}, #{praiseNum}, #{checkStatus})
+				, #{label}, #{praiseNum}, #{checkStatus}, #{visible})
 	</insert>
 
-	<update id="updateStatus">
+	<update id="updateStatusAndVisible">
 		UPDATE
 			time
 		SET
-			checkStatus = #{status}
+			checkStatus = #{checkStatus},
+			visible = #{visible}
 		WHERE
 			id = #{id}
 	</update>
+
+	<select id="get" resultType="Time">
+		SELECT
+			id, userId, title, imgUrl, content, longitude, latitude, createTime, updateTime, label, praiseNum, checkStatus
+		FROM
+			time
+		WHERE
+			id = #{id}
+	</select>
+
+	<update id="update" parameterType="Time">
+		UPDATE
+			time
+		SET
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="content != null">
+				content = #{content},
+			</if>
+			<if test="label != null">
+				label = #{label},
+			</if>
+		WHERE
+			id = #{id}
+	</update>
+
+	<update id="updatePraise">
+		UPDATE
+			time
+		SET
+			praiseNum = #{praiseNum}
+		WHERE
+			id = #{id}
+	</update>
+
+	<update id="updateVisible">
+		UPDATE
+			time
+		SET
+			visible = #{visible}
+		WHERE
+			id = #{timeId}
+	</update>
+
+	<select id="getByUserId" resultType="Time">
+		SELECT
+			title, imgUrl, content, createTime, updateTime, label, praiseNum
+		FROM
+			time
+	  	WHERE
+			userId = #{userId}
+	</select>
+
+	<select id="getByUncheck" resultType="Time">
+		SELECT
+			id, userId, title, imgUrl, content, label
+		FROM
+			time
+		WHERE
+			checkStatus = 0
+	</select>
 
 </mapper>  
